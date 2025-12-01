@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Welcome to Worknity Dashboard</h2>
+
+<p>You are logged in as <strong>{{ user.username }}</strong></p>
+<p>Your role is: <strong>{{ profile.role }}</strong></p>
+
+<hr>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h4>Tasks</h4>
+
+  {# Only MANAGER can see "Create Task" button #}
+  {% if profile.role == "MANAGER" %}
+    <a href="{% url 'task_create' %}" class="btn btn-sm btn-primary">
+      + Create Task
+    </a>
+  {% endif %}
+</div>
+
+{% if tasks %}
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Assigned To</th>
+        <th>Status</th>
+        <th>Due Date</th>
+        <th>Timeline</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for t in tasks %}
+      <tr>
+        <td>{{ t.title }}</td>
+        <td>{{ t.assigned_to }}</td>
+        <td>{{ t.status }}</td>
+        <td>{{ t.due_date }}</td>
+
+        {# TIMELINE PROGRESS BAR #}
+        <td style="width: 220px;">
+          <div class="progress">
+            {% if t.status == "PENDING" %}
+              <div class="progress-bar bg-warning" role="progressbar" style="width: 20%;">
+                Pending
+              </div>
+
+            {% elif t.status == "IN_PROGRESS" %}
+              <div class="progress-bar bg-info" role="progressbar" style="width: 60%;">
+                In Progress
+              </div>
+
+            {% elif t.status == "COMPLETED" %}
+              <div class="progress-bar bg-success" role="progressbar" style="width: 100%;">
+                Completed
+              </div>
+            {% endif %}
+          </div>
+        </td>
+
+        <td>
+          {# Manager or assigned employee can edit #}
+          {% if profile.role == "MANAGER" or t.assigned_to == user.username %}
+            <a href="{% url 'task_edit' t.task_id %}" class="btn btn-sm btn-outline-primary">
+              Edit
+            </a>
+          {% endif %}
+
+          {# Only ADMIN can delete #}
+          {% if profile.role == "ADMIN" %}
+            <a href="{% url 'task_delete' t.task_id %}" class="btn btn-sm btn-outline-danger">
+              Delete
+            </a>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <p>No tasks found.</p>
+{% endif %}
+
+{% endblock %}

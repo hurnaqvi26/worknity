@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h3>{{ action }} Task</h3>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button class="btn btn-primary w-100 mt-2">{{ action }}</button>
+</form>
+
+<hr>
+
+<h4>Comments</h4>
+
+{% for c in comments %}
+  <div class="card mb-2">
+    <div class="card-body">
+      <strong>{{ c.username }}</strong> ({{ c.created_at }}):
+      <p>{{ c.content }}</p>
+    </div>
+  </div>
+{% empty %}
+  <p>No comments yet.</p>
+{% endfor %}
+
+<hr>
+
+<h4>Add Comment</h4>
+<form method="post" action="/tasks/{{ task_id }}/comment/">
+  {% csrf_token %}
+  {{ comment_form.as_p }}
+  <button class="btn btn-secondary mt-2">Post Comment</button>
+</form>
+{% endblock %}
