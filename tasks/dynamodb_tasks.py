@@ -15,6 +15,10 @@ task_table = dynamodb.Table(settings.DDB_TASK_TABLE)
 # Create a new task
 def create_task(data):
     task_id = str(uuid.uuid4())
+
+    # Convert datetime to string (ISO format)
+    due_date = data["due_date"].isoformat()
+
     item = {
         "task_id": task_id,
         "title": data["title"],
@@ -22,14 +26,13 @@ def create_task(data):
         "assigned_to": data["assigned_to"],
         "created_by": data["created_by"],
         "status": "PENDING",
-        "due_date": data["due_date"],
+        "due_date": due_date,
         "created_at": datetime.utcnow().isoformat(),
         "updated_at": datetime.utcnow().isoformat(),
     }
 
     task_table.put_item(Item=item)
     return task_id
-
 
 # Get ALL tasks
 def get_all_tasks():
@@ -45,6 +48,10 @@ def get_task(task_id):
 
 # Update task
 def update_task(task_id, data):
+
+    # Convert datetime to ISO string
+    due_date = data["due_date"].isoformat()
+
     task_table.update_item(
         Key={"task_id": task_id},
         UpdateExpression="""
@@ -60,7 +67,7 @@ def update_task(task_id, data):
             ":d": data["description"],
             ":a": data["assigned_to"],
             ":s": data["status"],
-            ":due": data["due_date"],
+            ":due": due_date,
             ":u": datetime.utcnow().isoformat(),
         }
     )
