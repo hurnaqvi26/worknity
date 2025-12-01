@@ -1,0 +1,18 @@
+[MASTER]
+ignore=env
+jobs=1
+
+[MESSAGES CONTROL]
+disable=
+    missing-module-docstring,
+    missing-function-docstring,
+    missing-class-docstring,
+    invalid-name,
+    no-member
+
+[FORMAT]
+max-line-length=120
+
+[REPORTS]
+output-format=colorized
+score=yes
