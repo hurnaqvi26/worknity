@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>{{ action }} Task</h2>
+<hr>
+
+<form method="post">
+    {% csrf_token %}
+
+    <div class="mb-3">
+        {{ form.title.label }}<br>
+        {{ form.title }}
+    </div>
+
+    <div class="mb-3">
+        {{ form.description.label }}<br>
+        {{ form.description }}
+    </div>
+
+    <div class="mb-3">
+        {{ form.assigned_to.label }}<br>
+        {{ form.assigned_to }}
+    </div>
+
+    <div class="mb-3">
+        {{ form.status.label }}<br>
+        {{ form.status }}
+    </div>
+
+    <div class="mb-3">
+        {{ form.due_date.label }}<br>
+        {{ form.due_date }}
+    </div>
+
+    <button type="submit" class="btn btn-primary">{{ action }}</button>
+    <a href="{% url 'dashboard' %}" class="btn btn-secondary">Cancel</a>
+</form>
+
+<hr>
+
+<h4>Comments</h4>
+
+{% for c in comments %}
+<div class="card p-2 mb-2">
+    <strong>{{ c["author"] }}</strong> - {{ c["timestamp"] }}<br>
+    {{ c["text"] }}
+</div>
+{% empty %}
+<p>No comments yet.</p>
+{% endfor %}
+
+<form method="post" action="{% url 'add_comment' task_id %}">
+    {% csrf_token %}
+    {{ comment_form.text }}
+    <button type="submit" class="btn btn-sm btn-outline-primary mt-2">
+        Add Comment
+    </button>
+</form>
+
+{% endblock %}

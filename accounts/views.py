@@ -8,6 +8,14 @@ from .forms import EmployeeCreateForm
 
 from .forms import SignupForm
 
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
+from accounts.models import EmployeeProfile
+
+@login_required
+def profile_view(request):
+    profile, _ = EmployeeProfile.objects.get_or_create(user=request.user)
+    return render(request, "accounts/profile.html", {"profile": profile})
 
 # Signup
 def signup_view(request):

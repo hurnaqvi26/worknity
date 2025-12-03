@@ -1,86 +1,141 @@
-{% extends 'base.html' %}
-
+{% extends "base.html" %}
 {% block content %}
-<h2>Welcome to Worknity Dashboard</h2>
 
-<p>You are logged in as <strong>{{ user.username }}</strong></p>
-<p>Your role is: <strong>{{ profile.role }}</strong></p>
+<style>
+    .task-card {
+        border-radius: 12px;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        transition: 0.2s ease;
+    }
+    .task-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+    }
+    .status-badge {
+        font-size: 0.85rem;
+        padding: 6px 12px;
+        border-radius: 20px;
+    }
+</style>
+
+<h2 class="mb-4">👋 Welcome to Worknity Dashboard</h2>
+
+<div class="mb-2">
+    <p>You are logged in as <strong>{{ user.username }}</strong></p>
+    <p>Your role is: <strong>{{ profile.role }}</strong></p>
+</div>
 
 <hr>
 
 <div class="d-flex justify-content-between align-items-center mb-3">
-  <h4>Tasks</h4>
+    <h3 class="mb-0">Tasks</h3>
 
-  {# Only MANAGER can see "Create Task" button #}
-  {% if profile.role == "MANAGER" %}
-    <a href="{% url 'task_create' %}" class="btn btn-sm btn-primary">
-      + Create Task
+    {% if profile.role == "MANAGER" %}
+    <a href="{% url 'task_create' %}" class="btn btn-success">
+        <i class="bi bi-plus-circle"></i> Add New Task
     </a>
-  {% endif %}
+    {% endif %}
+</div>c
+{% if profile.role == "MANAGER" %}
+<div class="row mb-4">
+
+    <div class="col-md-3">
+        <div class="card shadow-sm p-3 text-center" style="border-left: 6px solid #0d6efd;">
+            <h5>Total Tasks</h5>
+            <h2>{{ total }}</h2>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card shadow-sm p-3 text-center" style="border-left: 6px solid #198754;">
+            <h5>Completed</h5>
+            <h2>{{ completed }}</h2>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card shadow-sm p-3 text-center" style="border-left: 6px solid #0dcaf0;">
+            <h5>In Progress</h5>
+            <h2>{{ in_progress }}</h2>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card shadow-sm p-3 text-center" style="border-left: 6px solid #ffc107;">
+            <h5>Pending</h5>
+            <h2>{{ pending }}</h2>
+        </div>
+    </div>
+
 </div>
-
-{% if tasks %}
-  <table class="table table-striped">
-    <thead>
-      <tr>
-        <th>Title</th>
-        <th>Assigned To</th>
-        <th>Status</th>
-        <th>Due Date</th>
-        <th>Timeline</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for t in tasks %}
-      <tr>
-        <td>{{ t.title }}</td>
-        <td>{{ t.assigned_to }}</td>
-        <td>{{ t.status }}</td>
-        <td>{{ t.due_date }}</td>
-
-        {# TIMELINE PROGRESS BAR #}
-        <td style="width: 220px;">
-          <div class="progress">
-            {% if t.status == "PENDING" %}
-              <div class="progress-bar bg-warning" role="progressbar" style="width: 20%;">
-                Pending
-              </div>
-
-            {% elif t.status == "IN_PROGRESS" %}
-              <div class="progress-bar bg-info" role="progressbar" style="width: 60%;">
-                In Progress
-              </div>
-
-            {% elif t.status == "COMPLETED" %}
-              <div class="progress-bar bg-success" role="progressbar" style="width: 100%;">
-                Completed
-              </div>
-            {% endif %}
-          </div>
-        </td>
-
-        <td>
-          {# Manager or assigned employee can edit #}
-          {% if profile.role == "MANAGER" or t.assigned_to == user.username %}
-            <a href="{% url 'task_edit' t.task_id %}" class="btn btn-sm btn-outline-primary">
-              Edit
-            </a>
-          {% endif %}
-
-          {# Only ADMIN can delete #}
-          {% if profile.role == "ADMIN" %}
-            <a href="{% url 'task_delete' t.task_id %}" class="btn btn-sm btn-outline-danger">
-              Delete
-            </a>
-          {% endif %}
-        </td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-{% else %}
-  <p>No tasks found.</p>
 {% endif %}
+
+<div class="row">
+    {% for t in tasks %}
+
+    <div class="col-md-4 mb-4">
+        <div class="card task-card p-3">
+
+            <h5>{{ t.title }}</h5>
+
+            <p class="text-muted mb-1">
+                <i class="bi bi-person-circle"></i> Assigned to: <strong>{{ t.assigned_to }}</strong>
+            </p>
+
+            <p class="text-muted mb-1">
+                <i class="bi bi-calendar-event"></i> Due: {{ t.due_date }}
+            </p>
+
+            <div class="mt-2 mb-2">
+                {% if t.status == "COMPLETED" %}
+                    <span class="status-badge bg-success text-white">Completed</span>
+                {% elif t.status == "IN_PROGRESS" %}
+                    <span class="status-badge bg-info text-dark">In Progress</span>
+                {% else %}
+                    <span class="status-badge bg-warning text-dark">Pending</span>
+                {% endif %}
+            </div>
+
+            <!-- Timeline progress -->
+            <div class="progress mb-3" style="height: 8px;">
+                {% if t.status == "COMPLETED" %}
+                    <div class="progress-bar bg-success" style="width: 100%;"></div>
+                {% elif t.status == "IN_PROGRESS" %}
+                    <div class="progress-bar bg-info" style="width: 50%;"></div>
+                {% else %}
+                    <div class="progress-bar bg-warning" style="width: 10%;"></div>
+                {% endif %}
+            </div>
+
+            <!-- ACTION BUTTONS -->
+            <div class="d-flex gap-2">
+
+                {% if profile.role == "MANAGER" %}
+                    <a href="{% url 'task_edit' t.task_id %}" class="btn btn-primary btn-sm w-50">
+                        Edit
+                    </a>
+                {% endif %}
+
+                {% if profile.role == "EMPLOYEE" and t.assigned_to == user.username %}
+                    <a href="{% url 'task_edit' t.task_id %}" class="btn btn-primary btn-sm w-50">
+                        Update
+                    </a>
+                {% endif %}
+
+                {% if profile.role == "ADMIN" %}
+                    <a href="{% url 'task_delete' t.task_id %}" class="btn btn-danger btn-sm w-50">
+                        Delete
+                    </a>
+                {% endif %}
+
+            </div>
+
+        </div>
+    </div>
+
+    {% empty %}
+        <p>No tasks available.</p>
+    {% endfor %}
+</div>
 
 {% endblock %}

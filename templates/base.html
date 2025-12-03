@@ -6,20 +6,48 @@
 </head>
 <body>
 
-<nav class="navbar navbar-dark bg-dark navbar-expand-lg mb-4">
-  <div class="container">
-    <a class="navbar-brand" href="/dashboard/">Worknity</a>
+<!--<nav class="navbar navbar-dark bg-dark navbar-expand-lg mb-4">-->
+<!--  <div class="container">-->
+<!--    <a class="navbar-brand" href="/dashboard/">Worknity</a>-->
 
-    <div class="navbar-nav ms-auto">
-      {% if user.is_authenticated %}
-        <span class="navbar-text me-3">Hi, {{ user.username }}</span>
-        <a class="nav-link" href="/logout/">Logout</a>
-      {% else %}
-        <a class="nav-link" href="/login/">Login</a>
-        <a class="nav-link" href="/signup/">Sign up</a>
-      {% endif %}
+<!--    <div class="navbar-nav ms-auto">-->
+<!--      {% if user.is_authenticated %}-->
+<!--        <span class="navbar-text me-3">Hi, {{ user.username }}</span>-->
+<!--        <a class="nav-link" href="/logout/">Logout</a>-->
+<!--      {% else %}-->
+<!--        <a class="nav-link" href="/login/">Login</a>-->
+<!--        <a class="nav-link" href="/signup/">Sign up</a>-->
+<!--      {% endif %}-->
+<!--    </div>-->
+<!--  </div>-->
+<!--</nav>-->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4">
+    <a class="navbar-brand" href="{% url 'dashboard' %}">Worknity</a>
+
+    <div class="ms-auto d-flex align-items-center">
+
+        <!-- USER PROFILE BUTTON -->
+        <div class="dropdown">
+            <button class="btn btn-outline-light dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                <i class="bi bi-person-circle"></i> {{ user.username }}
+            </button>
+
+            <ul class="dropdown-menu dropdown-menu-end">
+                <li class="dropdown-header">
+                    Role: <strong>{{ profile.role }}</strong>
+                </li>
+                <li><hr class="dropdown-divider"></li>
+
+                <li><a class="dropdown-item" href="{% url 'profile_view' %}">
+                    <i class="bi bi-person"></i> View Profile
+                </a></li>
+
+                <li><a class="dropdown-item" href="{% url 'logout' %}">
+                    <i class="bi bi-box-arrow-right"></i> Logout
+                </a></li>
+            </ul>
+        </div>
     </div>
-  </div>
 </nav>
 
 <div class="container">
