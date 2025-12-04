@@ -6,7 +6,6 @@ STATUS_CHOICES = [
     ("COMPLETED", "Completed"),
 ]
 
-
 class TaskForm(forms.Form):
     title = forms.CharField(max_length=200, required=True)
     description = forms.CharField(
@@ -23,10 +22,11 @@ class TaskForm(forms.Form):
     def __init__(self, *args, user_role=None, **kwargs):
         super().__init__(*args, **kwargs)
 
-        # EMPLOYEE = disable all fields except status
+        # EMPLOYEE — only edit "status"
         if user_role == "EMPLOYEE":
-            self.fields["title"].disabled = True
-            self.fields["description"].disabled = True
-            self.fields["assigned_to"].disabled = True
-            self.fields["due_date"].disabled = True
-            # Only status remains editable
+            # Hide fields instead of disabling (disabled fields do NOT POST)
+            for field in ["title", "description", "assigned_to", "due_date"]:
+                self.fields[field].widget = forms.HiddenInput()
+            
+            # status must be editable
+            self.fields["status"].disabled = False

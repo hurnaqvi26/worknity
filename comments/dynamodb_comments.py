@@ -4,10 +4,7 @@ from django.conf import settings
 from datetime import datetime
 
 # Connect to DynamoDB
-dynamodb = boto3.resource(
-    'dynamodb',
-    region_name=settings.AWS_REGION
-)
+dynamodb = boto3.resource("dynamodb", region_name="us-east-1")
 
 comment_table = dynamodb.Table(settings.DDB_COMMENT_TABLE)
 
@@ -35,3 +32,20 @@ def get_comments_for_task(task_id):
         ExpressionAttributeValues={":t": task_id}
     )
     return response.get("Items", [])
+
+def add_comment(task_id, author, text):
+    """
+    Cloud mode: Save a comment for a task in DynamoDB.
+    """
+    table = dynamodb.Table("comments")
+
+    item = {
+        "comment_id": str(uuid.uuid4()),
+        "task_id": task_id,
+        "author": author,
+        "text": text,
+        "timestamp": datetime.utcnow().isoformat()
+    }
+
+    table.put_item(Item=item)
+    return item

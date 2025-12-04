@@ -1,0 +1,11 @@
+Django==4.2.9
+boto3==1.34.10
+botocore==1.34.10
+pytz
+sqlparse
+python-dateutil
+asgiref
+requests
+pylint
+django-crispy-forms
+crispy-bootstrap5

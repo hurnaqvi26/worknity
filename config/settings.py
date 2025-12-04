@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-^d&o***g-r@n@#=155bv5ylo9^lnx)d-#wybrok(8$$h8-cykj
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['abc614d0f30c4cdb9f0e4e98c45a1c3e.vfs.cloud9.us-east-1.amazonaws.com']
+ALLOWED_HOSTS = ["*"]
 
 CSRF_TRUSTED_ORIGINS = [
     'https://*.vfs.cloud9.us-east-1.amazonaws.com',
@@ -136,4 +136,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AWS_REGION = "us-east-1"
 DDB_TASK_TABLE = "Worknity_Tasks"
 DDB_COMMENT_TABLE = "Worknity_Comments"
+
+DB_MODE = "local"
+
+
 

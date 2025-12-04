@@ -16,20 +16,32 @@
 {% for c in comments %}
   <div class="card mb-2">
     <div class="card-body">
-      <strong>{{ c.username }}</strong> ({{ c.created_at }}):
-      <p>{{ c.content }}</p>
+
+      <strong>
+        {{ c.author|default:c.username }}
+      </strong>
+
+      <small class="text-muted">
+        ({{ c.timestamp|default:c.created_at }})
+      </small>
+
+      <p>{{ c.text|default:c.content }}</p>
+
     </div>
   </div>
 {% empty %}
   <p>No comments yet.</p>
 {% endfor %}
 
+
 <hr>
 
 <h4>Add Comment</h4>
-<form method="post" action="/tasks/{{ task_id }}/comment/">
-  {% csrf_token %}
-  {{ comment_form.as_p }}
-  <button class="btn btn-secondary mt-2">Post Comment</button>
+<form method="POST" action="{% url 'add_comment' task_id %}">
+    {% csrf_token %}
+    {{ comment_form.text }}
+    <button type="submit" class="btn btn-sm btn-primary mt-2">Add Comment</button>
 </form>
+
+
 {% endblock %}
