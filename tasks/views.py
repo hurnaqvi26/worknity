@@ -160,6 +160,7 @@ def task_edit_view(request, task_id):
             if profile.role == "EMPLOYEE":
                 if settings.DB_MODE == "local":
                     task_obj.status = cleaned["status"]
+                    task_obj.due_date = cleaned["due_date"] 
                     task_obj.save()
                 else:
                     ddb_update_task(task_id, {
