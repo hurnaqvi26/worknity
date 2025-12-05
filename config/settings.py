@@ -21,9 +21,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 # SECRET_KEY = 'django-insecure-^d&o***g-r@n@#=155bv5ylo9^lnx)d-#wybrok(8$$h8-cykj'
+# import os
+# SECRET_KEY = os.environ.get("SECRET_KEY", "change-me")
+# # SECURITY WARNING: don't run with debug turned on in production!
 import os
-SECRET_KEY = os.environ.get("SECRET_KEY", "change-me")
-# SECURITY WARNING: don't run with debug turned on in production!
+from django.core.management.utils import get_random_secret_key
+
+SECRET_KEY = os.environ.get("SECRET_KEY", get_random_secret_key())
+
+
+
 DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
