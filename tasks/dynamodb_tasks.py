@@ -1,7 +1,7 @@
 import uuid
 import boto3
 from django.conf import settings
-from datetime import datetime
+from datetime import datetime, timezone
 
 # Connect to DynamoDB
 dynamodb = boto3.resource(
@@ -27,8 +27,8 @@ def create_task(data):
         "created_by": data["created_by"],
         "status": "PENDING",
         "due_date": due_date,
-        "created_at": datetime.utcnow().isoformat(),
-        "updated_at": datetime.utcnow().isoformat(),
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "updated_at": datetime.now(timezone.utc).isoformat(),
     }
 
     task_table.put_item(Item=item)

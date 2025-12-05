@@ -1,7 +1,8 @@
 import uuid
 import boto3
 from django.conf import settings
-from datetime import datetime
+from datetime import datetime, timezone
+
 
 # Connect to DynamoDB
 dynamodb = boto3.resource("dynamodb", region_name="us-east-1")
@@ -18,7 +19,7 @@ def create_comment(task_id, username, content):
         "task_id": task_id,
         "username": username,
         "content": content,
-        "created_at": datetime.utcnow().isoformat(),
+        "created_at": datetime.now(timezone.utc).isoformat(),
     }
 
     comment_table.put_item(Item=item)
