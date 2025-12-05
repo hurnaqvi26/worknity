@@ -2,10 +2,13 @@ import uuid
 import boto3
 from django.conf import settings
 from datetime import datetime, timezone
-
+import os
 
 # Connect to DynamoDB
-dynamodb = boto3.resource("dynamodb", region_name="us-east-1")
+
+AWS_REGION = os.getenv("AWS_REGION", "us-east-1")
+
+dynamodb = boto3.resource("dynamodb", region_name=AWS_REGION)
 
 comment_table = dynamodb.Table(settings.DDB_COMMENT_TABLE)
 
