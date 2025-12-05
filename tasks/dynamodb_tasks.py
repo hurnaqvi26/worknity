@@ -68,7 +68,7 @@ def update_task(task_id, data):
             ":a": data["assigned_to"],
             ":s": data["status"],
             ":due": due_date,
-            ":u": datetime.utcnow().isoformat(),
+            ":u": datetime.now(timezone.utc).isoformat(),
         }
     )
 

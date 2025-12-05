@@ -45,7 +45,7 @@ def add_comment(task_id, author, text):
         "task_id": task_id,
         "author": author,
         "text": text,
-        "timestamp": datetime.utcnow().isoformat()
+        "timestamp": datetime.now(timezone.utc).isoformat(),
     }
 
     table.put_item(Item=item)
