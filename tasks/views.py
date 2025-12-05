@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 from django.conf import settings
 from django.shortcuts import render, redirect, get_object_or_404
@@ -9,6 +9,7 @@ from accounts.models import EmployeeProfile
 from accounts.utils import role_required
 from .forms import TaskForm
 from .models import Task
+
 
 # Keep existing DynamoDB helpers for cloud mode
 # Import DynamoDB helpers ONLY when in cloud mode
@@ -148,7 +149,7 @@ def task_edit_view(request, task_id):
         try:
             due_dt = datetime.fromisoformat(task["due_date"])
         except Exception:
-            due_dt = datetime.utcnow()
+            due_dt = datetime.now(timezone.utc)
 
     # POST -> Save updates
     if request.method == "POST":
