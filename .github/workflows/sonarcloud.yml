@@ -26,7 +26,13 @@ jobs:
     - name: Install dependencies
       run: |
         pip install django boto3 pylint
-
+    
+    - name: Run tests with coverage
+      run: |
+        pip install coverage
+        coverage run manage.py test
+        coverage xml
+        
     - name: Run SonarCloud Scan
       uses: SonarSource/sonarcloud-github-action@v2
       with:

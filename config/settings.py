@@ -126,17 +126,35 @@ WSGI_APPLICATION = 'config.wsgi.application'
 #     }
 import os
 import dj_database_url
+import sys
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('worknitydb'),
-        'USER': os.environ.get('worknityuser'),
-        'PASSWORD': os.environ.get('Ehsan@2025'),
-        'HOST': os.environ.get('worknity-db.cql8okg8ycn8.us-east-1.rds.amazonaws.com'),
-        'PORT': os.environ.get('5432'),
+# Force SQLite for testing
+if 'test' in sys.argv:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "test_db.sqlite3",
+        }
     }
-}
+else:
+    if os.environ.get("DB_HOST"):
+        DATABASES = {
+            "default": {
+                "ENGINE": "django.db.backends.postgresql",
+                "NAME": os.environ.get("DB_NAME"),
+                "USER": os.environ.get("DB_USER"),
+                "PASSWORD": os.environ.get("DB_PASSWORD"),
+                "HOST": os.environ.get("DB_HOST"),
+                "PORT": os.environ.get("DB_PORT", "5432"),
+            }
+        }
+    else:
+        DATABASES = {
+            "default": {
+                "ENGINE": "django.db.backends.sqlite3",
+                "NAME": BASE_DIR / "db.sqlite3",
+            }
+        }
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
