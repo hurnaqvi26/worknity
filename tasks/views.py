@@ -20,6 +20,7 @@ from tasks.utils import (
     parse_due_date,
     user_has_permission,
 )
+TASK_FORM_TEMPLATE = "tasks/task_form.html"
 
 if settings.DB_MODE == "cloud":
     from .dynamodb_tasks import (
@@ -99,7 +100,7 @@ def task_create_view(request):
     else:
         form = TaskForm(user_role=profile.role)
 
-    return render(request, "tasks/task_form.html", {
+    return render(request, TASK_FORM_TEMPLATE, {
         "form": form,
         "action": "Create",
     })
@@ -225,7 +226,7 @@ def task_edit_view(request, task_id):
             user_role=profile.role,
         )
 
-    return render(request, "tasks/task_form.html", {
+    return render(request, TASK_FORM_TEMPLATE, {
         "form": form,
         "action": "Update",
         "comments": comments,
@@ -271,7 +272,7 @@ def task_edit_view(request, task_id):
             user_role=profile.role,
         )
 
-    return render(request, "tasks/task_form.html", {
+    return render(request, TASK_FORM_TEMPLATE, {
         "form": form,
         "action": "Update",
         "comments": comments,
