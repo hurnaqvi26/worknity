@@ -9,7 +9,6 @@ from comments.dynamodb_comments import get_comments_for_task as ddb_get_comments
 
 
 def load_task(task_id):
-    """Return (task_dict, task_obj_or_None) for local or cloud mode."""
     if settings.DB_MODE == "local":
         task_obj = get_object_or_404(Task, pk=task_id)
         task = {
@@ -24,8 +23,7 @@ def load_task(task_id):
         return task, task_obj
 
     # Cloud mode
-    return ddb_get_comments(task_id), None
-
+    return ddb_get_task(task_id), None
 
 def load_comments(task_obj, task_id):
     """Return comment dictionaries for local or cloud mode."""

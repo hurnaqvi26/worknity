@@ -9,6 +9,7 @@ from accounts.models import EmployeeProfile
 from accounts.utils import role_required
 from .forms import TaskForm
 from .models import Task
+from tasks.utils import load_task
 
 
 # Keep existing DynamoDB helpers for cloud mode
@@ -250,7 +251,7 @@ def task_edit_view(request, task_id):
     return render_task_form(request, form, comments, task_id)
 
     # ---- Main Logic ----------------------------------------------------------
-    task_data, task_obj = load_task()
+    task_data, task_obj = load_task(task_id)
 
     if not user_has_permission(task_data):
         messages.error(request, "You do not have permission to edit this task.")
