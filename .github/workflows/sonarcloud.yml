@@ -26,6 +26,10 @@ jobs:
     - name: Install dependencies
       run: |
         pip install django boto3 pylint
+        pip install -r requirements.txt
+        pip install coverage
+        pip install dj_database_url
+        pip install psycopg2-binary
     
     - name: Run tests with coverage
       run: |
