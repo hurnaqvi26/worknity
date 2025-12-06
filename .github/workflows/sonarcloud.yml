@@ -32,11 +32,12 @@ jobs:
         pip install coverage
         coverage run manage.py test
         coverage xml
-        
+
     - name: Run SonarCloud Scan
       uses: SonarSource/sonarcloud-github-action@v2
       with:
         args: >
+          -Dsonar.python.coverage.reportPaths=coverage.xml
           -Dsonar.python.version=3.9
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
