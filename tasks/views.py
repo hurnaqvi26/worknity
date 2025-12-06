@@ -184,56 +184,70 @@ def task_create_view(request):
 #         else:
 #             ddb_update_task(task_id, cleaned)
 
+# @login_required
+# def task_edit_view(request, task_id):
+#     profile = EmployeeProfile.objects.get(user=request.user)
+
+#     # Load task (now handled by utils)
+#     task, task_obj = load_task(task_id)
+
+#     if not user_has_permission(profile, task, request.user):
+#         messages.error(request, "You do not have permission to edit this task.")
+#         return redirect("dashboard")
+
+#     comments = load_comments(task_obj, task_id)
+#     due_dt = parse_due_date(task, task_obj)
+
+#     # POST
+#     if request.method == "POST":
+#         form = TaskForm(request.POST, user_role=profile.role)
+
+#         if form.is_valid():
+#             cleaned = form.cleaned_data
+
+#             if profile.role == "EMPLOYEE":
+#                 _update_employee_task(task_obj, task_id, cleaned, due_dt)
+#                 messages.success(request, "Task status updated!")
+#                 return redirect("dashboard")
+
+#             _update_manager_task(task_obj, task_id, cleaned)
+#             messages.success(request, "Task updated successfully!")
+#             return redirect("dashboard")
+
+#     else:
+#         form = TaskForm(
+#             initial={
+#                 "title": task["title"],
+#                 "description": task["description"],
+#                 "assigned_to": task["assigned_to"],
+#                 "status": task["status"],
+#                 "due_date": due_dt,
+#             },
+#             user_role=profile.role,
+#         )
+
+#     return render(request, TASK_FORM_TEMPLATE, {
+#         "form": form,
+#         "action": "Update",
+#         "comments": comments,
+#         "comment_form": CommentForm(),
+#         "task_id": task_id,
+#     })
+
 @login_required
 def task_edit_view(request, task_id):
-    profile = EmployeeProfile.objects.get(user=request.user)
+    profile = get_user_profile(request)
+    task, task_obj = load_task_data(task_id)
+    enforce_permission(profile, task, request)
 
-    # Load task (now handled by utils)
-    task, task_obj = load_task(task_id)
-
-    if not user_has_permission(profile, task, request.user):
-        messages.error(request, "You do not have permission to edit this task.")
-        return redirect("dashboard")
-
-    comments = load_comments(task_obj, task_id)
+    comments = load_comments_data(task_obj, task_id)
     due_dt = parse_due_date(task, task_obj)
 
-    # POST
     if request.method == "POST":
-        form = TaskForm(request.POST, user_role=profile.role)
+        return handle_post_request(request, profile, task_obj, task_id, due_dt, task)
 
-        if form.is_valid():
-            cleaned = form.cleaned_data
-
-            if profile.role == "EMPLOYEE":
-                _update_employee_task(task_obj, task_id, cleaned, due_dt)
-                messages.success(request, "Task status updated!")
-                return redirect("dashboard")
-
-            _update_manager_task(task_obj, task_id, cleaned)
-            messages.success(request, "Task updated successfully!")
-            return redirect("dashboard")
-
-    else:
-        form = TaskForm(
-            initial={
-                "title": task["title"],
-                "description": task["description"],
-                "assigned_to": task["assigned_to"],
-                "status": task["status"],
-                "due_date": due_dt,
-            },
-            user_role=profile.role,
-        )
-
-    return render(request, TASK_FORM_TEMPLATE, {
-        "form": form,
-        "action": "Update",
-        "comments": comments,
-        "comment_form": CommentForm(),
-        "task_id": task_id,
-    })
-
+    form = build_task_form(task, due_dt, profile.role)
+    return render_task_form(request, form, comments, task_id)
 
     # ---- Main Logic ----------------------------------------------------------
     task_data, task_obj = load_task()
@@ -272,7 +286,7 @@ def task_edit_view(request, task_id):
             user_role=profile.role,
         )
 
-    return render(request, TASK_FORM_TEMPLATE, {
+    return render(request, "tasks/task_form.html", {
         "form": form,
         "action": "Update",
         "comments": comments,
